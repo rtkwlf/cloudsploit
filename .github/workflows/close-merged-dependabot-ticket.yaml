@@ -1,0 +1,24 @@
+################
+# DO NOT EDIT! #
+################
+# This file is maintained by Cloud Security Group automation,
+# making any changes here will prompt a new PR to
+# be opened against your repository.
+# Please reach out to Cloud Security Group if there are any questions, concerns, or to report any errors.
+# https://arcticwolf.atlassian.net/wiki/spaces/AWD/pages/2912944394/Engaging+the+DevSecOps+team
+name: close-merged-dependabot-ticket
+on:
+  pull_request:
+    types:
+      - closed
+jobs:
+  close-jira-ticket:
+    if: github.event.pull_request.merged == true && github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Close dependabot ticket
+        uses: rtkwlf-actions/close-dependabot-ticket@v1
+        with:
+          jira_api_token: ${{ secrets.PAT_RTKWLF_DEVSECOPS_TICKETER }}
+          jira_user: ${{ secrets.RTKWLF_DEVSECOPS_TICKETER_EMAIL }}
+          pr_title: ${{ github.event.pull_request.title }}
