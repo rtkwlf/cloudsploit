@@ -1,4 +1,4 @@
-name: 
+name:
 on: [push, pull_request, create, delete, issue_comment]
 
 jobs:
@@ -23,3 +23,18 @@ jobs:
 
       - name: NPM Test
         run: npm test
+      - name: Upload Coverage Reports to GitHub
+        id: upload-coverage-github
+        uses: actions/upload-artifact@v4
+        with:
+          path: bazel-out/_coverage
+          name: "coverage"
+  upload-coverage-to-backstage:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    permissions:
+      id-token: write
+    uses: rtkwlf-actions/common-build/.github/workflows/code-coverage-upload.yaml@v8
+    with:
+      artifact-name: "coverage"
+      component-name: "${{ github.repository_owner }}-${{ github.event.repository.name }}"
